@@ -1,0 +1,143 @@
+/* Styles généraux pour le jeu Tetris */
+.game-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0 auto;
+    max-width: 1000px;
+    flex-wrap: wrap;
+}
+
+#tetris {
+    background-color: #1a1a1a;
+    border: 2px solid #333;
+    max-width: 100%;
+    height: auto;
+}
+
+.game-info {
+    min-width: 200px;
+    text-align: center;
+}
+
+#nextPiece {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    margin: 10px auto;
+}
+
+/* Animations */
+@keyframes flash {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.flash {
+    animation: flash 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.score-update {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Style pour le modal */
+.modal-content {
+    border: 2px solid #666;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 15px;
+    }
+
+    .game-info {
+        margin-top: 1rem;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    #tetris {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .controls .btn {
+        width: 100%;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .score-container, .level-container {
+        padding: 0.5rem;
+    }
+
+    #nextPiece {
+        max-width: 80px;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1.display-4 {
+        font-size: 2rem;
+    }
+
+    .game-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .display-6 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Effets de survol pour les boutons */
+.btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Style pour le score et le niveau */
+.score-container, .level-container {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Animation pour les lignes complétées */
+@keyframes lineClear {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.line-clear {
+    animation: lineClear 0.3s ease-out;
+}
