@@ -123,6 +123,63 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Mobile touch controls */
+.mobile-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+.mobile-row {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+.touch-btn {
+    width: 72px;
+    height: 56px;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+}
+
+/* Show mobile controls on small screens */
+@media (max-width: 768px) {
+    .mobile-controls {
+        display: flex !important;
+    }
+
+    /* Make canvas fit nicely on phones */
+    #tetris {
+        width: 320px;
+        height: 640px;
+        max-width: 90vw;
+        height: calc(90vw * 2);
+    }
+
+    .game-container {
+        gap: 1rem;
+    }
+
+    .game-info {
+        max-width: 360px;
+    }
+}
+
+/* Floating control bar for very small devices (optional) */
+@media (max-width: 420px) {
+    .touch-btn {
+        width: 60px;
+        height: 48px;
+        font-size: 1rem;
+    }
+}
+
 /* Style pour le score et le niveau */
 .score-container, .level-container {
     background-color: rgba(0, 0, 0, 0.2);
