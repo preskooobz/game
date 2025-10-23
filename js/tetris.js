@@ -52,55 +52,83 @@ class Tetris {
         this.blockSize = logicalWidth / 10;
 
         // Ajustement du canvas pour la prochaine pièce
-        this.nextCanvas.width = Math.min(100, maxWidth / 3);
-        this.nextCanvas.height = Math.min(100, maxWidth / 3);
+        const nextPieceSize = Math.min(80, logicalWidth / 3);
+        this.nextCanvas.style.width = nextPieceSize + 'px';
+        this.nextCanvas.style.height = nextPieceSize + 'px';
+        this.nextCanvas.width = Math.floor(nextPieceSize * dpr);
+        this.nextCanvas.height = Math.floor(nextPieceSize * dpr);
+        this.nextCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
         
         // Redessiner le jeu si en cours
         if (this.currentPiece) {
             this.draw();
+            this.drawNextPiece();
         }
     }
 
     initMobileControls() {
-        // Show mobile controls when touch device
-        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        // Activer les contrôles mobiles par défaut
         const mobileControls = document.getElementById('mobileControls');
-        if (isTouch && mobileControls) {
-            mobileControls.classList.remove('d-none');
-            mobileControls.setAttribute('aria-hidden', 'false');
+        if (mobileControls) {
+            mobileControls.style.display = 'flex';
         }
 
-        const bindPress = (element, onStart, onEnd) => {
+        // Gestion des événements tactiles et souris
+        const bindPress = (element, onAction) => {
             if (!element) return;
 
-            let timer = null;
-            const start = (e) => {
+            let isActive = false;
+            let moveInterval = null;
+
+            const startAction = (e) => {
                 e.preventDefault();
-                onStart();
-                // start continuous action after short delay
-                timer = setInterval(onStart, 120);
-            };
-            const end = (e) => {
-                e && e.preventDefault();
-                if (timer) clearInterval(timer);
-                timer = null;
-                if (onEnd) onEnd();
+                if (isActive) return;
+                isActive = true;
+                
+                // Action immédiate
+                onAction();
+                
+                // Mouvement continu après un court délai
+                moveInterval = setInterval(() => {
+                    onAction();
+                }, 100); // Plus rapide pour une meilleure réactivité
             };
 
-            element.addEventListener('touchstart', start, {passive: false});
-            element.addEventListener('mousedown', start);
-            element.addEventListener('touchend', end);
-            element.addEventListener('mouseup', end);
-            element.addEventListener('mouseleave', end);
+            const stopAction = (e) => {
+                e && e.preventDefault();
+                isActive = false;
+                if (moveInterval) {
+                    clearInterval(moveInterval);
+                    moveInterval = null;
+                }
+            };
+
+            // Événements tactiles
+            element.addEventListener('touchstart', startAction, {passive: false});
+            element.addEventListener('touchend', stopAction);
+            element.addEventListener('touchcancel', stopAction);
+
+            // Événements souris
+            element.addEventListener('mousedown', startAction);
+            element.addEventListener('mouseup', stopAction);
+            element.addEventListener('mouseleave', stopAction);
+
+            // Effet visuel au toucher
+            element.addEventListener('touchstart', () => {
+                element.style.transform = 'scale(0.95)';
+            });
+            element.addEventListener('touchend', () => {
+                element.style.transform = 'scale(1)';
+            });
         };
 
+        // Liaison des contrôles aux actions
         bindPress(this.btnLeft, () => this.moveLeft());
         bindPress(this.btnRight, () => this.moveRight());
         bindPress(this.btnDown, () => this.drop());
         bindPress(this.btnRotate, () => this.rotate());
         bindPress(this.btnDrop, () => {
-            // hard drop
-            if (!this.currentPiece) return;
+            if (!this.currentPiece || !this.gameLoop) return;
             while (!this.collision()) {
                 this.currentPiece.pos.y++;
             }
@@ -147,14 +175,24 @@ class Tetris {
     }
 
     start() {
-        if (this.gameLoop) {
-            return; // Le jeu est déjà en cours
+        try {
+            // Arrêter le jeu en cours s'il y en a un
+            if (this.gameLoop) {
+                cancelAnimationFrame(this.gameLoop);
+                this.gameLoop = null;
+            }
+            
+            this.reset();
+            this.spawnPiece();
+            this.draw(); // Dessiner l'état initial
+            this.drawNextPiece(); // Dessiner la prochaine pièce
+            this.lastTime = performance.now();
+            this.gameLoop = requestAnimationFrame((time) => this.update(time));
+            document.getElementById('startBtn').textContent = 'Redémarrer';
+            console.log('Jeu démarré');
+        } catch (error) {
+            console.error('Erreur lors du démarrage du jeu:', error);
         }
-        
-        this.reset();
-        this.spawnPiece();
-        this.gameLoop = requestAnimationFrame((time) => this.update(time));
-        document.getElementById('startBtn').textContent = 'Redémarrer';
     }
 
     generatePiece() {
