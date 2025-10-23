@@ -29,20 +29,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="controls mt-4">
-                    <button id="startBtn" class="btn btn-success btn-lg px-4 me-2">Démarrer</button>
-                    <button id="pauseBtn" class="btn btn-warning btn-lg px-4">Pause</button>
-                </div>
-                <!-- Mobile touch controls (hidden on desktop) -->
-                <div class="mobile-controls d-none" id="mobileControls" aria-hidden="true">
-                    <div class="mobile-row">
-                        <button class="touch-btn btn btn-light" id="btnLeft" aria-label="Gauche">◀</button>
-                        <button class="touch-btn btn btn-light" id="btnRotate" aria-label="Rotate">⟳</button>
-                        <button class="touch-btn btn btn-light" id="btnRight" aria-label="Droite">▶</button>
+                <!-- Game controls - fixed position on mobile -->
+                <div class="game-controls">
+                    <div class="controls-top mb-3">
+                        <button id="startBtn" class="btn btn-success btn-lg">Démarrer</button>
+                        <button id="pauseBtn" class="btn btn-warning btn-lg">Pause</button>
                     </div>
-                    <div class="mobile-row">
-                        <button class="touch-btn btn btn-primary" id="btnDown" aria-label="Bas">↓</button>
-                        <button class="touch-btn btn btn-danger" id="btnDrop" aria-label="Drop">Drop</button>
+                    <!-- Mobile touch controls -->
+                    <div class="mobile-controls" id="mobileControls">
+                        <div class="mobile-row">
+                            <button class="touch-btn" id="btnLeft" aria-label="Gauche">◀</button>
+                            <button class="touch-btn" id="btnRotate" aria-label="Rotate">⟳</button>
+                            <button class="touch-btn" id="btnRight" aria-label="Droite">▶</button>
+                        </div>
+                        <div class="mobile-row">
+                            <button class="touch-btn down-btn" id="btnDown" aria-label="Bas">↓</button>
+                            <button class="touch-btn drop-btn" id="btnDrop" aria-label="Drop">▼</button>
+                        </div>
                     </div>
                 </div>
             </div>
