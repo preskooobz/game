@@ -15,26 +15,28 @@
                 <div class="game-container">
                     <canvas id="tetris" class="rounded shadow"></canvas>
                     <div class="game-info bg-secondary p-4 rounded shadow-sm">
-                        <div class="score-container mb-4">
-                            <h3>Score</h3>
-                            <p id="score" class="display-6">0</p>
-                        </div>
-                        <div class="level-container mb-4">
-                            <h3>Niveau</h3>
-                            <p id="level" class="display-6">1</p>
+                        <div class="game-stats">
+                            <div class="score-container">
+                                <h3>Score</h3>
+                                <p id="score" class="display-6">0</p>
+                            </div>
+                            <div class="level-container">
+                                <h3>Niveau</h3>
+                                <p id="level" class="display-6">1</p>
+                            </div>
                         </div>
                         <div class="next-piece-container">
                             <h3>Suivant</h3>
                             <canvas id="nextPiece" class="rounded"></canvas>
                         </div>
+                        <div class="controls-top">
+                            <button id="startBtn" class="btn btn-success">Démarrer</button>
+                            <button id="pauseBtn" class="btn btn-warning">Pause</button>
+                        </div>
                     </div>
                 </div>
                 <!-- Game controls - fixed position on mobile -->
                 <div class="game-controls">
-                    <div class="controls-top mb-3">
-                        <button id="startBtn" class="btn btn-success btn-lg">Démarrer</button>
-                        <button id="pauseBtn" class="btn btn-warning btn-lg">Pause</button>
-                    </div>
                     <!-- Mobile touch controls -->
                     <div class="mobile-controls" id="mobileControls">
                         <div class="mobile-row">
