@@ -20,14 +20,36 @@ class Tetris {
 
         // Initialisation du modal
         this.gameOverModal = new bootstrap.Modal(document.getElementById('gameOverModal'));
+
+        // Mobile controls elements
+        this.btnLeft = document.getElementById('btnLeft');
+        this.btnRight = document.getElementById('btnRight');
+        this.btnRotate = document.getElementById('btnRotate');
+        this.btnDown = document.getElementById('btnDown');
+        this.btnDrop = document.getElementById('btnDrop');
+
+        this._touchInterval = null; // used for continuous movement
+        this.initMobileControls();
     }
 
     initCanvasSize() {
         // Calcul de la taille optimale en fonction de la fenêtre
-        const maxWidth = Math.min(window.innerWidth - 40, 300);
-        this.canvas.width = maxWidth;
-        this.canvas.height = maxWidth * 2;
-        this.blockSize = maxWidth / 10;
+        const containerWidth = Math.min(window.innerWidth - 40, 360);
+        const dpr = window.devicePixelRatio || 1;
+
+        const logicalWidth = Math.min(containerWidth, 360);
+        const logicalHeight = logicalWidth * 2;
+
+        // Set CSS size
+        this.canvas.style.width = logicalWidth + 'px';
+        this.canvas.style.height = logicalHeight + 'px';
+
+        // Set actual pixel size for crisp rendering on high-DPI
+        this.canvas.width = Math.floor(logicalWidth * dpr);
+        this.canvas.height = Math.floor(logicalHeight * dpr);
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        this.blockSize = logicalWidth / 10;
 
         // Ajustement du canvas pour la prochaine pièce
         this.nextCanvas.width = Math.min(100, maxWidth / 3);
@@ -37,6 +59,55 @@ class Tetris {
         if (this.currentPiece) {
             this.draw();
         }
+    }
+
+    initMobileControls() {
+        // Show mobile controls when touch device
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const mobileControls = document.getElementById('mobileControls');
+        if (isTouch && mobileControls) {
+            mobileControls.classList.remove('d-none');
+            mobileControls.setAttribute('aria-hidden', 'false');
+        }
+
+        const bindPress = (element, onStart, onEnd) => {
+            if (!element) return;
+
+            let timer = null;
+            const start = (e) => {
+                e.preventDefault();
+                onStart();
+                // start continuous action after short delay
+                timer = setInterval(onStart, 120);
+            };
+            const end = (e) => {
+                e && e.preventDefault();
+                if (timer) clearInterval(timer);
+                timer = null;
+                if (onEnd) onEnd();
+            };
+
+            element.addEventListener('touchstart', start, {passive: false});
+            element.addEventListener('mousedown', start);
+            element.addEventListener('touchend', end);
+            element.addEventListener('mouseup', end);
+            element.addEventListener('mouseleave', end);
+        };
+
+        bindPress(this.btnLeft, () => this.moveLeft());
+        bindPress(this.btnRight, () => this.moveRight());
+        bindPress(this.btnDown, () => this.drop());
+        bindPress(this.btnRotate, () => this.rotate());
+        bindPress(this.btnDrop, () => {
+            // hard drop
+            if (!this.currentPiece) return;
+            while (!this.collision()) {
+                this.currentPiece.pos.y++;
+            }
+            this.currentPiece.pos.y--;
+            this.merge();
+            this.spawnPiece();
+        });
     }
 
     reset() {
@@ -282,16 +353,10 @@ class Tetris {
 
         switch(event.keyCode) {
             case 37: // Gauche
-                this.currentPiece.pos.x--;
-                if (this.collision()) {
-                    this.currentPiece.pos.x++;
-                }
+                this.moveLeft();
                 break;
             case 39: // Droite
-                this.currentPiece.pos.x++;
-                if (this.collision()) {
-                    this.currentPiece.pos.x--;
-                }
+                this.moveRight();
                 break;
             case 40: // Bas
                 this.drop();
@@ -307,6 +372,22 @@ class Tetris {
                 this.merge();
                 this.spawnPiece();
                 break;
+        }
+    }
+
+    moveLeft() {
+        if (!this.currentPiece) return;
+        this.currentPiece.pos.x--;
+        if (this.collision()) {
+            this.currentPiece.pos.x++;
+        }
+    }
+
+    moveRight() {
+        if (!this.currentPiece) return;
+        this.currentPiece.pos.x++;
+        if (this.collision()) {
+            this.currentPiece.pos.x--;
         }
     }
 
