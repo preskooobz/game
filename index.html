@@ -33,6 +33,18 @@
                     <button id="startBtn" class="btn btn-success btn-lg px-4 me-2">Démarrer</button>
                     <button id="pauseBtn" class="btn btn-warning btn-lg px-4">Pause</button>
                 </div>
+                <!-- Mobile touch controls (hidden on desktop) -->
+                <div class="mobile-controls d-none" id="mobileControls" aria-hidden="true">
+                    <div class="mobile-row">
+                        <button class="touch-btn btn btn-light" id="btnLeft" aria-label="Gauche">◀</button>
+                        <button class="touch-btn btn btn-light" id="btnRotate" aria-label="Rotate">⟳</button>
+                        <button class="touch-btn btn btn-light" id="btnRight" aria-label="Droite">▶</button>
+                    </div>
+                    <div class="mobile-row">
+                        <button class="touch-btn btn btn-primary" id="btnDown" aria-label="Bas">↓</button>
+                        <button class="touch-btn btn btn-danger" id="btnDrop" aria-label="Drop">Drop</button>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- Modal de Game Over -->
